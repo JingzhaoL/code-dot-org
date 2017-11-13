@@ -1,38 +1,29 @@
-include_recipe 'chef-apt-docker'
+include_recipe 'cdo-pmm::server'
 
-docker_installation_package 'default' do
-  action :create
+# Installs and configures PMM client pointing at the target MySQL server.
+apt_repository 'percona' do
+  uri 'https://repo.percona.com/apt'
+  distribution node[:lsb][:codename]
+  components ['main']
+  key '8507EFA5'
 end
 
-# docker_service_manager 'default' do
-#   storage_driver :overlay2
-#   action :start
-# end
+apt_package 'pmm-client'
 
-docker_image 'percona/pmm-server' do
-  tag 'latest'
-  action :pull
-  notifies :redeploy, 'docker_container[pmm_server]'
+template "/usr/local/percona/pmm-client/pmm.yml" do
+  source 'pmm.yml.erb'
+  notifies :run, 'execute[pmm-admin install]', :immediately
 end
 
-docker_container 'pmm_data' do
-  repo 'percona/pmm-server'
-  tag 'latest'
-  volumes %w(
-    /opt/prometheus/data
-    /opt/consul-data
-    /var/lib/mysql
-    /var/lib/grafana
-  )
-  command 'true'
-  action :create
-end
-
-docker_container 'pmm_server' do
-  repo 'percona/pmm-server'
-  tag 'latest'
-  port "#{node['cdo-pmm']['server']['port']}:80"
-  volumes_from 'pmm_data'
-  restart_policy 'always'
-  env ['DISABLE_TELEMETRY=true']
+execute 'pmm-admin install' do
+  sensitive true
+  command <<-BASH
+pmm-admin repair && \
+pmm-admin add mysql \
+  --host \'#{node['cdo-pmm']['mysql']['host']}\' \
+  --port \'#{node['cdo-pmm']['mysql']['port']}\' \
+  --user \'#{node['cdo-pmm']['mysql']['user']}\' \
+  --password \'#{node['cdo-pmm']['mysql']['password']}\'
+  BASH
+  action :nothing
 end

@@ -12,25 +12,23 @@ driver:
   tmpfs:
   - /run
   - /run/lock
-  network: host
 transport:
   name: dokken
 provisioner:
   name: dokken
 platforms:
   - name: ubuntu-14.04
+    attributes:
+      cdo-pmm:
+        server:
+          network_mode: dokken
+          host: pmm_server
     driver:
       image: dokken/ubuntu-14.04
       pid_one_command: /sbin/init
-      ports: '8082'
     run_list:
       - recipe[apt]
 suites:
-  - name: server
+  - name: default
     run_list:
-      - recipe[cdo-pmm]
-      - recipe[cdo-mysql::server]
-      - recipe[cdo-pmm::client]
-  - name: client
-    run_list:
-      - recipe[cdo-pmm::client]
+      - recipe[pmm_test]

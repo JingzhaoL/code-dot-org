@@ -1,3 +1,12 @@
-default['cdo-pmm']['server']['host'] = 'localhost'
-default['cdo-pmm']['server']['port'] = '8082'
-default['cdo-pmm']['mysql'] = "localhost"
+default['cdo-pmm']['server'] = {
+  host: 'localhost',
+  port: 80,
+  port_forward: nil,
+  network_mode: 'bridge'
+}
+default['cdo-pmm']['mysql'] = {
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: ''
+}

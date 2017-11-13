@@ -4,6 +4,7 @@ Installs and configures Percona Monitoring and Management (PMM) server.
 ## Requirements
 
 - Ubuntu 14.04
+- Docker Engine installed and service running (e.g., via `cdo-docker`)
 
 ## Attributes
 
