@@ -69,6 +69,7 @@ GRAPH
     apt (>= 0.0.0)
     build-essential (>= 0.0.0)
     cdo-cloudwatch-extra-metrics (>= 0.0.0)
+    cdo-docker (>= 0.0.0)
     cdo-java-7 (>= 0.0.0)
     cdo-mysql (>= 0.0.0)
     cdo-networking (>= 0.0.0)

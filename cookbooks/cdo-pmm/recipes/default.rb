@@ -20,9 +20,9 @@ end
 # Pass all mysql options to the mysql-add commands as `--name='value'`.
 mysql = node['cdo-pmm']['mysql']
 commands = {
-  'uninstall': {},
-  'add mysql:metrics': mysql,
-  'add mysql:queries': mysql
+  'uninstall' => {},
+  'add mysql:metrics' => mysql,
+  'add mysql:queries' => mysql
 }
 commands['add linux:metrics'] = {} if node['cdo-pmm']['linux_metrics']
 pmm_admin_command = commands.map do |command, opts|
