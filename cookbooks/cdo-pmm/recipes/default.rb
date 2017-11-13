@@ -19,7 +19,12 @@ execute 'pmm-admin install' do
   sensitive true
   command <<-BASH
 pmm-admin repair && \
-pmm-admin add mysql \
+pmm-admin add mysql:metrics \
+  --host \'#{node['cdo-pmm']['mysql']['host']}\' \
+  --port \'#{node['cdo-pmm']['mysql']['port']}\' \
+  --user \'#{node['cdo-pmm']['mysql']['user']}\' \
+  --password \'#{node['cdo-pmm']['mysql']['password']}\' && \
+pmm-admin add mysql:queries \
   --host \'#{node['cdo-pmm']['mysql']['host']}\' \
   --port \'#{node['cdo-pmm']['mysql']['port']}\' \
   --user \'#{node['cdo-pmm']['mysql']['user']}\' \
