@@ -10,3 +10,4 @@ default['cdo-pmm']['mysql'] = {
   user: 'root',
   password: ''
 }
+default['cdo-pmm']['linux_metrics'] = true

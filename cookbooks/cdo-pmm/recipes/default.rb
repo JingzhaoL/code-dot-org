@@ -1,3 +1,4 @@
+include_recipe 'apt'
 include_recipe 'cdo-pmm::server'
 
 # Installs and configures PMM client pointing at the target MySQL server.
@@ -12,23 +13,24 @@ apt_package 'pmm-client'
 
 template "/usr/local/percona/pmm-client/pmm.yml" do
   source 'pmm.yml.erb'
-  notifies :run, 'execute[pmm-admin install]', :immediately
+  notifies :run, 'execute[pmm-admin]', :immediately
 end
 
-execute 'pmm-admin install' do
+# Constructs a sequence of 'pmm-admin' commands to run to configure the PMM client.
+# Pass all mysql options to the mysql-add commands as `--name='value'`.
+mysql = node['cdo-pmm']['mysql']
+commands = {
+  'uninstall': {},
+  'add mysql:metrics': mysql,
+  'add mysql:queries': mysql
+}
+commands['add linux:metrics'] = {} if node['cdo-pmm']['linux_metrics']
+pmm_admin_command = commands.map do |command, opts|
+  "pmm-admin #{command} #{opts.map {|name, value| "--#{name}='#{value}'"}.join(' ')}"
+end.join(' && ')
+
+execute 'pmm-admin' do
   sensitive true
-  command <<-BASH
-pmm-admin repair && \
-pmm-admin add mysql:metrics \
-  --host \'#{node['cdo-pmm']['mysql']['host']}\' \
-  --port \'#{node['cdo-pmm']['mysql']['port']}\' \
-  --user \'#{node['cdo-pmm']['mysql']['user']}\' \
-  --password \'#{node['cdo-pmm']['mysql']['password']}\' && \
-pmm-admin add mysql:queries \
-  --host \'#{node['cdo-pmm']['mysql']['host']}\' \
-  --port \'#{node['cdo-pmm']['mysql']['port']}\' \
-  --user \'#{node['cdo-pmm']['mysql']['user']}\' \
-  --password \'#{node['cdo-pmm']['mysql']['password']}\'
-  BASH
+  command pmm_admin_command
   action :nothing
 end

@@ -8,5 +8,6 @@ describe 'pmm-admin' do
 end
 describe command('pmm-admin list') do
   its('stdout') {should match /mysql:queries.*YES/}
+  its('stdout') {should match /linux:metrics.*YES/}
   its('stdout') {should match /mysql:metrics.*YES/}
 end
