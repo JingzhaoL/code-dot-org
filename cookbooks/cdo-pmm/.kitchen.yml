@@ -23,6 +23,8 @@ platforms:
     attributes:
       cdo-pmm:
         server:
+          port: 80
+          port_forward: null
           network_mode: dokken
           host: pmm_server
     driver:

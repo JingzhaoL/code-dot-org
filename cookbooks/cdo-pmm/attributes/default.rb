@@ -1,7 +1,7 @@
 default['cdo-pmm']['server'] = {
   host: 'localhost',
-  port: 80,
-  port_forward: nil,
+  port: 8083,
+  port_forward: 8083,
   network_mode: 'bridge'
 }
 default['cdo-pmm']['mysql'] = {
