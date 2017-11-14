@@ -17,9 +17,6 @@ platforms:
       - recipe[apt]
 suites:
   - name: default
-    attributes:
-      cdo-docker:
-        storage_driver: null
     driver:
       privileged: true
     run_list:
